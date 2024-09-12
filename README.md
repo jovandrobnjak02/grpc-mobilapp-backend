@@ -1,7 +1,3 @@
-<p align="center">
-  <a href="https://www.vegaitglobal.com/" target="blank"><img src="https://www.vegaitglobal.com/media/kemh5m2d/vegait_logo_white.png?quality=60" width="200" alt="Vega Logo" /></a>
-</p>
-
 <h1 align='center'>MaxOptra Loader-App Backend Server</h1>
 <p align='center'>gRPC demo backend server for mobile app</p>
 
