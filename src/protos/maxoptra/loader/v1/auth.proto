@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package maxoptra.loader.v1;
+
+import "google/protobuf/duration.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AuthProto";
+option java_package = "com.maxoptra.loader.v1";
+
+/*
+   Request for access and refresh tokens
+*/
+message LoginRequest {
+  //Account name
+  string account = 1;
+  //Username for this user
+  string username = 2;
+  //Password for this user
+  string password = 3;
+  //Device model will be used in future for securing the session, optional field and can be empty for now
+  optional string device_model = 4;
+  //Device os will be used in future for securing the session, optional field and can be empty for now
+  optional string device_os = 5;
+}
+
+/*
+   Message with access token and refresh token
+*/
+message LoginResponse {
+  //Access token for authentication header
+  string access_token = 1;
+  //Token type for authentication header
+  string token_type = 2;
+  //Refresh token if access token is expired
+  string refresh_token = 3;
+  //Expiry time of access token
+  google.protobuf.Duration expires_in = 4;
+}
+
+/*
+   Request for new access token, and device params for security reasons
+*/
+message RefreshRequest {
+  //Refresh token which obtained in login response
+  string refresh_token = 1;
+  //Device model will be used in future for securing the session, optional field and can be empty for now
+  optional string device_model_string = 2;
+  //Device os will be used in future for securing the session, optional field and can be empty for now
+  optional string device_os_string = 3;
+}
+
+/*
+   Response with new access token and token type
+*/
+message RefreshResponse {
+  //Access token for authentication header
+  string access_token = 1;
+  //Token type for authentication header
+  string token_type = 2;
+  //Expiry time of access token
+  google.protobuf.Duration expires_in = 3;
+}

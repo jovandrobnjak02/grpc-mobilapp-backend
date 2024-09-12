@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: .
+    ports:
+      - '50051:50051'
+    env_file:
+      - path: ./.env
+        required: true
+  db:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database_init:/docker-entrypoint-initdb.d

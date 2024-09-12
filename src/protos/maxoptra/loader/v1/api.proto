@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package maxoptra.loader.v1;
+
+import "google/protobuf/empty.proto";
+import 'maxoptra/loader/v1/auth.proto';
+import 'maxoptra/loader/v1/event.proto';
+import 'maxoptra/loader/v1/run.proto';
+
+option java_multiple_files = true;
+option java_outer_classname = "LoaderProto";
+option java_package = "com.maxoptra.loader.v1";
+
+/**
+ * Loader API Service for Mobile App
+ * Authentication model:
+ * All methods except Login and Refresh require authentication with access token in GRPC message header Authorization: <token_type> <access_token>
+ * Access token expires in amount of time <expire_in>, if this happens the client should call the Refresh rpc and obtain a new access_token.
+ * Refresh token is used only for Refresh rpc and should be securely stored in app.
+ * Refresh token can expire, if this happens - client should send the Login request again.
+ * Error model:
+ * The app follows google style status errors - https://cloud.google.com/apis/design/errors#error_model
+ * Some errors will be described in rpc documentation, but client should be aware that some errors can be not described and handle it as 'generic' error
+ *
+ * Data Formats:
+ * All Timestamps in UTC timezone by default if other is not described in field or rpc comment
+ */
+service LoaderService {
+  //Exchange account/username/password for jwt token
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  //Refresh access token using refresh token
+  rpc Refresh(RefreshRequest) returns (RefreshResponse) {}
+  //Logout on this device, this will make access token and refresh token invalid
+  // and also closes the EventStream from server side
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  //Get all loader runs available for this loader
+  rpc GetRuns(GetRunsRequest) returns (GetRunsResponse) {}
+  //Get particular run with items to load
+  rpc GetRun(GetRunRequest) returns (GetRunResponse) {}
+  //Subscribe to application specific events
+  rpc EventStream(google.protobuf.Empty) returns (stream EventStreamResponse) {}
+}

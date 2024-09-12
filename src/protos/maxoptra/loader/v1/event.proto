@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package maxoptra.loader.v1;
+
+import 'google/protobuf/any.proto';
+import 'google/protobuf/timestamp.proto';
+
+option java_multiple_files = true;
+option java_outer_classname = "EventProto";
+option java_package = "com.maxoptra.loader.v1";
+
+/*
+   Various backend events which can be pushed to mobile device
+*/
+enum ApiEventType {
+  //Generic event type, used for unknown events as fallback
+  API_EVENT_TYPE_UNSPECIFIED = 0;
+  //Happens when user logs in on different device using same credentials
+  //If received then we should logout user from current device and show him a specific message
+  //If this event is happened - user session would be invalidated and event stream would be closed cleanly
+  //after sending this event
+  API_EVENT_TYPE_CONCURRENT_LOGIN = 1;
+  //Notifies the loader that run list was updated and some runs are changed
+  //Currently there is no details available about what is changed, so we just sending the updated event
+  API_EVENT_TYPE_RUN_LIST_UPDATED = 2;
+}
+
+/*
+   Type for event stream from backend
+*/
+message EventStreamResponse {
+  //Type of event
+  ApiEventType type = 1;
+  //Timestamp when this event is happened according to server time
+  google.protobuf.Timestamp timestamp = 2;
+  //Optional event payload, for current existing events - it will be null
+  optional google.protobuf.Any payload = 3;
+}

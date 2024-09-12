@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package maxoptra.loader.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "LoaderRunProto";
+option java_package = "com.maxoptra.loader.v1";
+
+//Request to get all runs without items for particular loader
+message GetRunsRequest {}
+
+//Response containing all available runs without items for particular loader
+message GetRunsResponse {
+  //List of run summary
+  repeated LoaderRunSummary runs = 1;
+}
+
+//Request to get particular run with items
+message GetRunRequest {
+  //Reference to run
+  string reference = 1;
+}
+
+//Response containing particular run with items
+message GetRunResponse {
+  //Run with items
+  LoaderRun run = 1;
+}
+
+//Enum representing current loading status of particular run
+enum LoaderRunStatus {
+  //Generic status, used for unknown statuses as fallback
+  LOADER_RUN_STATUS_UNSPECIFIED = 0;
+  //Loading is not started, no items was loaded in the vehicle
+  LOADER_RUN_STATUS_NOT_STARTED = 1;
+  //Loading is started and some items is already in the vehicle
+  LOADER_RUN_STATUS_IN_PROGRESS = 2;
+  //Loading is completed, all items loaded in the vehicle
+  LOADER_RUN_STATUS_COMPLETED = 3;
+}
+
+//Represent summary of the run
+message LoaderRunSummary {
+  //Reference to a loading run, used as id
+  string reference = 1;
+  //Run start date, represents time when vehicle supposed to start working
+  google.protobuf.Timestamp start_date = 2;
+  //Loading status of run
+  LoaderRunStatus status = 3;
+  //Name of the vehicle that needs to be loaded
+  string vehicle_name = 4;
+  //Name of the driver that would be driving that vehicle
+  string driver_name = 5;
+  //Sequence number of this run in schedule
+  int32 number = 6;
+}
+
+//Represent single run for loading
+message LoaderRun {
+  //Details of this run
+  LoaderRunSummary summary = 1;
+  //List of items that need to be loaded in the vehicle
+  repeated LoaderItem items = 2;
+}
+
+//TBD
+message LoaderItem {}
+
+//supplemental message for change event, currently out of scope, saved for later
+message LoaderRunChangeList {
+  //List of changes
+  repeated LoaderRunChange changes = 1;
+}
+
+//supplemental message for change event, currently out of scope, saved for later
+message LoaderRunChange {
+  //Reference to loading run
+  string reference = 1;
+  //Type of change
+  LoaderRunChangeType type = 2;
+}
+
+//Enum that represents type of change in the run
+enum LoaderRunChangeType {
+  //Generic status, used for unknown statuses as fallback
+  LOADER_RUN_CHANGE_TYPE_UNSPECIFIED = 0;
+  //This run is new run
+  LOADER_RUN_CHANGE_TYPE_RUN_CREATED = 1;
+  //This run is existing run and some fields either in summary or in items is changed
+  LOADER_RUN_CHANGE_TYPE_RUN_MODIFIED = 2;
+  //This run was removed from schedule
+  LOADER_RUN_CHANGE_TYPE_RUN_REMOVED = 3;
+}
